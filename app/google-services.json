@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "185926806427",
+    "project_id": "messenger-3cd5f",
+    "storage_bucket": "messenger-3cd5f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185926806427:android:a51b6b3d96eef5fcc54f3e",
+        "android_client_info": {
+          "package_name": "com.leif2k.messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7UHUC077kL6ygWHiPp5-PHIYR1zwDh5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

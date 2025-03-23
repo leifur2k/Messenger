@@ -19,8 +19,10 @@ import androidx.lifecycle.ViewModelProvider;
 public class ResetPasswordActivity extends AppCompatActivity {
 
     private static final String EXTRA_EMAIL = "email";
+
     private EditText editTextEmail;
     private Button buttonResetPassword;
+
     private ResetPasswordViewModel viewModel;
 
 

@@ -13,14 +13,24 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
+
 public class UsersActivity extends AppCompatActivity {
 
-    private static final String EXTRA_USER = "user";
+    private static final String EXTRA_CURRENT_USER_ID = "current_id";
+
+    private RecyclerView recyclerViewUsers;
     private Button buttonLogout;
+
     private UsersViewModel viewModel;
+    private UsersAdapter usersAdapter;
+
+    private String currentUserId;
 
 
     @Override
@@ -35,19 +45,40 @@ public class UsersActivity extends AppCompatActivity {
         });
 
         initViews();
+
+        currentUserId = getIntent().getStringExtra(EXTRA_CURRENT_USER_ID);
+
+        usersAdapter = new UsersAdapter();
+        recyclerViewUsers.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewUsers.setAdapter(usersAdapter);
+
         viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         observeViewModel();
         setupClickListeners();
 
-        Intent intent = getIntent();
-        FirebaseUser firebaseUser = intent.getParcelableExtra(EXTRA_USER);
-
-
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.setUserOnline(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.setUserOnline(false);
+    }
 
     private void observeViewModel() {
+
+        viewModel.getUsers().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> users) {
+                usersAdapter.setUsers(users);
+            }
+        });
 
         viewModel.getUser().observe(this, new Observer<FirebaseUser>() {
             @Override
@@ -64,6 +95,14 @@ public class UsersActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
 
+        usersAdapter.setOnUserClickListener(new UsersAdapter.OnUserClickListener() {
+            @Override
+            public void onUserClick(User user) {
+                Intent intent = ChatActivity.newIntent(UsersActivity.this, currentUserId, user.getId());
+                startActivity(intent);
+            }
+        });
+
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,14 +112,15 @@ public class UsersActivity extends AppCompatActivity {
 
     }
 
-    public static Intent newIntent(Context context, FirebaseUser firebaseUser) {
+    public static Intent newIntent(Context context, String currentUserId) {
         Intent intent = new Intent(context, UsersActivity.class);
-        intent.putExtra(EXTRA_USER, firebaseUser);
+        intent.putExtra(EXTRA_CURRENT_USER_ID, currentUserId);
         return intent;
 
     }
 
     private void initViews() {
+        recyclerViewUsers = findViewById(R.id.recyclerViewUsers);
         buttonLogout = findViewById(R.id.buttonLogout);
     }
 }
